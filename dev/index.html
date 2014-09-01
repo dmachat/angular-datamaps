@@ -1,0 +1,137 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Angular Datamaps Example</title>
+  <meta name="description" content="" />
+  <meta name="viewport" content="width=device-width" />
+  <link rel="stylesheet" href="bootstrap/dist/css/bootstrap.css" />
+  <!--[if lt IE 9]>
+    <script src="es5-shim/es5-shim.min.js"></script>
+    <script src="json3/lib/json3.min.js"></script>
+    <script src="html5shiv/dist/html5shiv.js"></script>
+    <script src="respond/respond.min.js"></script>
+  <![endif]-->
+  <script src="angular/angular.js" charset="utf-8"></script>
+  <script src="d3/d3.js" charset="utf-8"></script>
+  <script src="topojson/topojson.js" charset="utf-8"></script>
+  <script src="datamaps/dist/datamaps.all.js" charset="utf-8"></script>
+  <script src="angular-datamaps.js" charset="utf-8"></script>
+
+  <script charset="utf-8">
+
+    // Define our main app
+    var app = angular.module('app', [
+      'datamaps'
+    ]);
+
+    // Scope as the parent of the angular-datamap directive
+    app.controller('SimpleCtrl', function($scope) {
+      $scope.map = {
+        type: 'usa',
+        data: [{
+          values: [
+            { "location": "CA", "value": "Y" }, { "location": "OR", "value": "Y" }, { "location": "WA", "value": "N" }, { "location": "NV", "value": "Y" }, { "location": "ID", "value": "Maybe" }, { "location": "UT", "value": "N" }, { "location": "AZ", "value": "Y" }, { "location": "NM", "value": "N" }, { "location": "AK", "value": "Y" }, { "location": "TX", "value": "Y" }, { "location": "CO", "value": "Maybe" }, { "location": "MT", "value": "N" }, { "location": "WY", "value": "N" }, { "location": "ND", "value": "Y" }, { "location": "SD", "value": "N" }, { "location": "NE", "value": "Y" }, { "location": "KS", "value": "Y" }, { "location": "OK", "value": "N" }, { "location": "MN", "value": "Y" }, { "location": "IA", "value": "N" }, { "location": "MO", "value": "Y" }, { "location": "AR", "value": "Y" }, { "location": "LA", "value": "N" }, { "location": "WI", "value": "Y" }, { "location": "MI", "value": "N" }, { "location": "IL", "value": "Maybe" }, { "location": "TN", "value": "Maybe" }, { "location": "KY", "value": "N" }, { "location": "MS", "value": "Y" }, { "location": "AL", "value": "N" }, { "location": "FL", "value": "Maybe" }, { "location": "GA", "value": "N" }, { "location": "SC", "value": "Y" }, { "location": "NC", "value": "Y" }, { "location": "VA", "value": "N" }, { "location": "WV", "value": "Y" }, { "location": "IN", "value": "Y" }, { "location": "OH", "value": "Y" }, { "location": "PA", "value": "Y" }, { "location": "NY", "value": "Y" }, { "location": "VT", "value": "Y" }, { "location": "NH", "value": "Y" }, { "location": "ME", "value": "Y" }, { "location": "MA", "value": "N" }, { "location": "RI", "value": "N" }, { "location": "CT", "value": "Y" }, { "location": "NJ", "value": "Y" }, { "location": "DE", "value": "N" }, { "location": "MD", "value": "N" }, { "location": "DC", "value": "Y" }, { "location": "HI", "value": "N" } 
+          ]
+        }],
+        colors: ['#666666', '#b9b9b9', '#fafafa'],
+        options: {
+          width: 1110,
+          legend: true,
+          labels: true,
+          labelColor: '#333333',
+          labelSize: 14,
+        }
+      }
+
+      $scope.map2 = {
+        type: 'world',
+        data: [{
+          values: [
+            { "location": "USA", "value": 125 },
+            { "location": "CAN", "value": 50 },
+            { "location": "IRL", "value": 70 },
+            { "location": "RUS", "value": 312 }
+          ]
+        }],
+        colors: ['#666666', '#b9b9b9', '#fafafa'],
+        options: {
+          width: 1110,
+          fillQuartiles: false
+        }
+      }
+
+    });
+
+    // Start it up
+    angular.element(document).ready(function () {
+      angular.bootstrap(document, ['app']);
+    });
+
+  </script>
+</head>
+<body>
+  <div class="container" ng-controller="SimpleCtrl">
+    <div class="jumbotron">
+      <div class="jumbotron-body">
+        <h1>Angular Datamaps</h1>
+        <p>An Angular directive to display maps with d3 and Datamaps</p>
+        <ul>
+          <li>Lightweight</li>
+          <li>Automatically updates on changes to bound data and options</li>
+          <li>No dependencies beside d3, topojson and https://github.com/markmarkoh/datamaps</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Simple Example - USA</h3>
+      </div>
+      <div class="panel-body">
+        <datamap
+          style="display: block; padding: 0 0 50px"
+          options="map.options"
+          data="map.data"
+          colors="map.colors"
+          type="{{ map.type }}"
+          >
+        </datamap>
+      </div>
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="input-group">
+            <span class="input-group-addon">
+              <input type="checkbox" ng-model="map.options.labels" id="map-labels-toggle" />
+            </span>
+            <input class="form-control" type="text" placeholder="Toggle Labels" />
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="input-group">
+            <input class="form-control" type="number" ng-model="map.options.width" id="map-option-width" />
+            <span class="input-group-addon">Map Width</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">World Map</h3>
+      </div>
+      <div class="panel-body">
+        <datamap
+          options="map2.options"
+          data="map2.data"
+          colors="map2.colors"
+          type="{{ map2.type }}"
+          >
+        </datamap>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

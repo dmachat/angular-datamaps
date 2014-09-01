@@ -1,0 +1,47 @@
+{
+  "name": "angular-datamaps",
+  "version": "0.0.1",
+  "description": "AngularJS Datamaps -- provides an Angular directive to wrap https://github.com/markmarkoh/datamaps",
+  "main": "angular-datamaps.js",
+  "scripts": {
+    "test": "grunt travis --verbose"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com/dmachat/angular-datamaps.git"
+  },
+  "keywords": [
+    "angular",
+    "d3",
+    "maps",
+    "data",
+    "viz",
+    "directive"
+  ],
+  "author": "Drew Machat <drew@alleyinteractive.com>",
+  "bugs": {
+    "url": "https://github.com/dmachat/angular-datamaps/issues"
+  },
+  "devDependencies": {
+    "matchdep": "~0.3.0",
+    "grunt": "~0.4.1",
+    "grunt-contrib-clean": "~0.5.0",
+    "grunt-contrib-watch": "~0.5.1",
+    "grunt-contrib-jshint": "~0.8.0",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-uglify": "~0.3.1",
+    "grunt-contrib-sass": "~0.8.1",
+    "grunt-contrib-connect": "~0.8.0",
+    "grunt-wiredep": "~1.8.0",
+    "grunt-ngmin": "~0.0.3",
+    "grunt-bump": "0.0.13",
+    "karma": "~0.10.5",
+    "grunt-karma": "~0.6.2",
+    "karma-phantomjs-launcher": "~0.1.0",
+    "karma-chrome-launcher": "~0.1.0",
+    "karma-ie-launcher": "~0.1.1",
+    "karma-growl-reporter": "~0.1.1",
+    "protractor": "~0.16.1",
+    "ejs": "~0.8.4"
+  }
+}
