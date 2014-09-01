@@ -23,10 +23,10 @@ angular.module('app', [
 
 Load the datamaps and the two libraries datamaps depends on (d3 and topojson).
 ```html
-<script src="d3.js" charset="utf-8"></script>
-<script src="topojson.js" charset="utf-8"></script>
-<script src="datamaps.all.js" charset="utf-8"></script>
-<script src="angular-datamaps.js" charset="utf-8"></script>
+<script src="d3.js"></script>
+<script src="topojson.js"></script>
+<script src="datamaps.all.js"></script>
+<script src="angular-datamaps.js"></script>
 
 <datamap
   options="map.options"
