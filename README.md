@@ -6,7 +6,7 @@ Provides an Angular directive to wrap https://github.com/markmarkoh/datamaps and
  - No dependencies beside d3, topojson and datamaps
  - Documentation for available options can be found at https://github.com/markmarkoh/datamaps
 
-## Example
+![Datamap example](/usaMap.png?raw=true "USA Map Example")
 
 ## Install
 Clone to your vendor directory
