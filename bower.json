@@ -24,9 +24,17 @@
     ".editorconfig",
     ".gitignore",
     ".jshintrc",
+    "bower.json",
+    "package.json",
+    "README.md",
+    "Gruntfile.js",
+    "usaMap.png",
+    "karma.conf.js",
+    "protractor.conf.js",
     "bower_components",
     "node_modules",
-    "example",
+    "src",
+    "dev",
     "test",
     "e2e"
   ]
