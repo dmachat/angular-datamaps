@@ -52,6 +52,7 @@ $scope.map = {
   colors: ['#666666', '#b9b9b9', '#fafafa'],
   options: {
     width: 1110,
+    legendHeight: 60 // optionally set the padding for the legend
   }
 }
 ```

@@ -6,7 +6,7 @@ angular.module('datamaps', []);
 
 angular.module('datamaps')
 
-  .directive('datamap', function() {
+  .directive('datamap', ['$compile', function($compile) {
     return {
       restrict: 'EA',
       scope: {
@@ -80,6 +80,7 @@ angular.module('datamaps')
             // Update bounding box
             scope.width = options.width || 600;
             scope.height = options.height || scope.width * 0.6;
+            scope.legendHeight = options.legendHeight || 50;
 
             scope.mapOptions = mapOptions();
 
@@ -121,7 +122,7 @@ angular.module('datamaps')
           clearElement: function () {
             scope.map = null;
             element.empty();
-            var mapContainer = angular.element('<div style="position: relative; display: block; height: {{ height }}px; width: {{ width }}px"></div>');
+            var mapContainer = $compile('<div style="position: relative; display: block; padding-bottom: {{ legendHeight }}px;"></div>')(scope);
             element.append(mapContainer);
           }
         };
@@ -146,4 +147,4 @@ angular.module('datamaps')
         }, true);
       }
     };
-  });
+  }]);
