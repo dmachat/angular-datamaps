@@ -19,6 +19,7 @@ OR
 Install with bower and save to your project's bower.json
 ```sh
 bower install angular-datamaps --save
+```
 
 Add the module to your app dependencies and include it in your page.
 ```js
