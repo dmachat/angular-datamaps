@@ -6,7 +6,6 @@
   "main": "dist/angular-datamaps.min.js",
   "dependencies": {
     "angular": ">=1.0.8",
-    "d3": "~3.4.3",
     "datamaps": "~0.3.2"
   },
   "devDependencies": {
