@@ -64,6 +64,29 @@ $scope.map = {
 }
 ```
 
+### Geography click events ###
+The datamaps click event can trigger a bound function with the clicked geography object. Just add your custom function to the `on-click` attribute, like this (notice there are no parenthesis):
+
+```html
+<datamap
+  options="map.options"
+  data="map.data"
+  colors="map.colors"
+  type="{{ map.type }}"
+  on-click="updateActiveGeography"
+  >
+</datamap>
+```
+
+Then in your controller, that function gets the selected geography object as it's argument, like so:
+
+```js
+$scope.updateActiveGeography = function(geography) {
+  $scope.stateName = geography.properties.name;
+  $scope.stateCode = geography.id;
+}
+```
+
 ## Build it yourself!
 angular-datamaps is built with grunt.
 

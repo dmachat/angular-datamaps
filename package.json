@@ -1,6 +1,6 @@
 {
   "name": "angular-datamaps",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "AngularJS Datamaps -- provides an Angular directive to wrap https://github.com/markmarkoh/datamaps",
   "main": "angular-datamaps.js",
   "scripts": {

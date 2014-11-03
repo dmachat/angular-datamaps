@@ -6,12 +6,13 @@ angular.module('datamaps')
     return {
       restrict: 'EA',
       scope: {
-        data: '=',			//map data, [required]
-        options: '=',		//map options, [required]
-        colors: '=?',    //map colors array, [optional]
+        data: '=',      //map data, [required]
+        options: '=',   //map options, [required]
+        colors: '=?',   //map colors array, [optional]
         type: '@?',     //map scope, world or usa, [optional, defaults to usa]
+        onClick: '&?'   //geography onClick event [optional]
       },
-      link: function(scope, element) {
+      link: function(scope, element, attrs) {
 
         // Generate base map options
         function mapOptions() {
@@ -24,7 +25,14 @@ angular.module('datamaps')
             fills: {
               defaultFill: '#b9b9b9'
             },
-            data: {}
+            data: {},
+            done: function(datamap) {
+              if (angular.isDefined(attrs.onClick)) {
+                datamap.svg.selectAll('.datamaps-subunit').on('click', function(geography) {
+                  scope.onClick()(geography);
+                });
+              }
+            }
           };
         }
 
