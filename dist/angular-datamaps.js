@@ -113,6 +113,12 @@ angular.module('datamaps').directive('datamap', [
             var _data = {};
             angular.forEach(data[0].values, function (val) {
               _data[val.location] = { fillKey: val.value };
+              // Set extra fields in case we want to use them in the popup
+              angular.forEach(val, function (prop, key) {
+                if (key !== 'value' && key !== 'location') {
+                  _data[val.location][key] = prop;
+                }
+              });
             });
             scope.api.updateWithData(_data);
           }
