@@ -111,7 +111,7 @@ angular.module('datamaps').directive('datamap', [
           if (!data.length) {
             return;
           }
-          if (old.length && data[0].values.length !== old[0].values.length) {
+          if (!old.length || data[0].values.length !== old[0].values.length) {
             scope.api.refresh();
           } else {
             var _data = {};
