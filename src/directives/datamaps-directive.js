@@ -76,8 +76,8 @@ angular.module('datamaps')
             // Clearing
             scope.api.clearElement();
 
-            // Exit if options are not yet bound
-            if (!angular.isDefined(options)) {
+            // Exit if options or data are not yet bound
+            if (!angular.isDefined(options) || !scope.data.length) {
               return;
             }
 
@@ -138,7 +138,11 @@ angular.module('datamaps')
 
         // Watch data changing. Only refresh if options or data map points have changed
         scope.$watch('data', function(data, old) {
-          if (data[0].values.length !== old[0].values.length) {
+          // Return if no data
+          if (!data.length) {
+            return;
+          }
+          if (old.length && data[0].values.length !== old[0].values.length) {
             scope.api.refresh();
           }
           else {
