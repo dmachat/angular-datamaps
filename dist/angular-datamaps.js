@@ -11,7 +11,8 @@ angular.module('datamaps').directive('datamap', [
         options: '=',
         colors: '=?',
         type: '@?',
-        onClick: '&?'
+        onClick: '&?',
+        fills: '=?'
       },
       link: function (scope, element, attrs) {
         // Generate base map options
@@ -38,19 +39,32 @@ angular.module('datamaps').directive('datamap', [
           angular.forEach(data, function (val) {
             dst.data[val.location] = { fillKey: val.value };
           });
-          if (!scope.options.fillQuartiles) {
+          if (angular.isDefined(scope.fills)) {
+            dst.fills = scope.fills;
+          } else if (!scope.options.fillQuartiles) {
             var fillKeys = [];
             angular.forEach(data, function (data) {
               if (fillKeys.indexOf(data.value) === -1) {
                 fillKeys.push(data.value);
               }
             });
+            if (angular.isUndefined(scope.colors)) {
+              scope.colors = defaultColors();
+            }
             angular.forEach(fillKeys, function (key, idx) {
               dst.fills[key] = scope.colors[idx];
             });
           } else {
           }
           return dst;
+        }
+        // Generate default colors
+        function defaultColors() {
+          var d3colors = d3.scale.category20(), colors = [];
+          for (var i = 0; i < 20; i++) {
+            colors.push(d3colors(i));
+          }
+          return colors;
         }
         scope.mapOptions = mapOptions();
         scope.api = {

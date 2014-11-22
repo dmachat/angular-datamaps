@@ -10,7 +10,8 @@ angular.module('datamaps')
         options: '=',   //map options, [required]
         colors: '=?',   //map colors array, [optional]
         type: '@?',     //map scope, world or usa, [optional, defaults to usa]
-        onClick: '&?'   //geography onClick event [optional]
+        onClick: '&?',   //geography onClick event [optional]
+        fills: '=?'     //fills, for preprocessed fills [optional]
       },
       link: function(scope, element, attrs) {
 
@@ -42,13 +43,19 @@ angular.module('datamaps')
             dst.data[val.location] = { fillKey: val.value };
           });
 
-          if (!scope.options.fillQuartiles) {
+          if (angular.isDefined(scope.fills)) {
+            dst.fills = scope.fills;
+          } else if (!scope.options.fillQuartiles) {
             var fillKeys = [];
             angular.forEach(data, function(data) {
               if (fillKeys.indexOf(data.value) === -1) {
                 fillKeys.push(data.value);
               }
             });
+
+            if (angular.isUndefined(scope.colors)) {
+              scope.colors = defaultColors();
+            }
 
             angular.forEach(fillKeys, function(key, idx) {
               dst.fills[key] = scope.colors[idx];
@@ -59,6 +66,16 @@ angular.module('datamaps')
           }
 
           return dst;
+        }
+
+        // Generate default colors
+        function defaultColors() {
+          var d3colors = d3.scale.category20(),
+            colors = [];
+          for (var i = 0; i < 20; i++ ) {
+            colors.push(d3colors(i));
+          }
+          return colors;
         }
 
         scope.mapOptions = mapOptions();
