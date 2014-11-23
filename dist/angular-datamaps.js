@@ -1,147 +1,119 @@
 'use strict';
+
 angular.module('datamaps', []);
+
 'use strict';
-angular.module('datamaps').directive('datamap', [
-  '$compile',
-  function ($compile) {
+
+angular.module('datamaps')
+
+  .directive('datamap', ['$compile', function($compile) {
     return {
       restrict: 'EA',
       scope: {
-        data: '=',
-        options: '=',
-        colors: '=?',
-        type: '@?',
-        onClick: '&?',
-        fills: '=?'
+        map: '=',       //datamaps objects [required]
+        onClick: '&?',  //geography onClick event [optional]
       },
-      link: function (scope, element, attrs) {
+      link: function(scope, element, attrs) {
+
         // Generate base map options
-        function mapOptions() {
+        function mapOptions(options) {
           return {
             element: element[0].children[0],
-            scope: scope.type === 'usa' || scope.type === 'world' ? scope.type : 'usa',
+            scope: 'usa',
             height: scope.height,
             width: scope.width,
-            projection: scope.type === 'world' ? 'mercator' : 'equirectangular',
-            fills: { defaultFill: '#b9b9b9' },
+            fills: {
+              defaultFill: '#b9b9b9'
+            },
             data: {},
-            done: function (datamap) {
+            done: function(datamap) {
               if (angular.isDefined(attrs.onClick)) {
-                datamap.svg.selectAll('.datamaps-subunit').on('click', function (geography) {
+                datamap.svg.selectAll('.datamaps-subunit').on('click', function(geography) {
                   scope.onClick()(geography);
                 });
               }
             }
           };
         }
-        // Extend the mapOptions object with data and fill values
-        function mapData(dst, data) {
-          angular.forEach(data, function (val) {
-            dst.data[val.location] = { fillKey: val.value };
-          });
-          if (angular.isDefined(scope.fills)) {
-            dst.fills = scope.fills;
-          } else if (!scope.options.fillQuartiles) {
-            var fillKeys = [];
-            angular.forEach(data, function (data) {
-              if (fillKeys.indexOf(data.value) === -1) {
-                fillKeys.push(data.value);
-              }
-            });
-            if (angular.isUndefined(scope.colors)) {
-              scope.colors = defaultColors();
-            }
-            angular.forEach(fillKeys, function (key, idx) {
-              dst.fills[key] = scope.colors[idx];
-            });
-          } else {
-          }
-          return dst;
-        }
-        // Generate default colors
-        function defaultColors() {
-          var d3colors = d3.scale.category20(), colors = [];
-          for (var i = 0; i < 20; i++) {
-            colors.push(d3colors(i));
-          }
-          return colors;
-        }
-        scope.mapOptions = mapOptions();
+
         scope.api = {
-          refresh: function () {
-            scope.api.updateWithOptions(scope.options, scope.data);
+
+          // Fully refresh directive
+          refresh: function(map) {
+            scope.api.updateWithOptions(map);
           },
-          updateWithOptions: function (options, data) {
+
+          // Update chart with new options
+          updateWithOptions: function(map) {
+
             // Clearing
             scope.api.clearElement();
-            // Exit if options or data are not yet bound
-            if (!angular.isDefined(options) || !scope.data.length) {
-              return;
-            }
+
             // Update bounding box
-            scope.width = options.width || 600;
-            scope.height = options.height || scope.width * 0.6;
-            scope.legendHeight = options.legendHeight || 50;
-            scope.mapOptions = mapOptions();
-            // Add data to map redraw
-            if (data[0].values.length) {
-              // update the map element
-              scope.mapOptions = mapData(scope.mapOptions, data[0].values);
-            }
-            scope.mapOptions.geographyConfig = angular.extend({}, options.geographyConfig);
-            scope.map = new Datamap(scope.mapOptions);
+            scope.width = map.options.width || 600;
+            scope.height = map.options.height || scope.width * 0.6;
+            scope.legendHeight = map.options.legendHeight || 50;
+
+            // Set a few defaults for the directive
+            scope.mapOptions = mapOptions(map.options);
+
+            // Add the good stuff
+            scope.mapOptions = angular.extend(scope.mapOptions, map);
+
+            scope.datamap = new Datamap(scope.mapOptions);
+
+            // Update options and choropleth
+            scope.api.refreshOptions(map.options);
+            scope.api.updateWithData(map.data);
+          },
+
+          // Set options on the datamap
+          refreshOptions: function(options) {
             if (!options) {
               return;
             }
+
             // set labels
             if (options.labels) {
-              scope.map.labels({
+              scope.datamap.labels({
                 labelColor: options.labelColor ? options.labelColor : '#333333',
                 fontSize: options.labelSize ? options.labelSize : 12
               });
             }
+
             // set legend
             if (options.legend) {
-              scope.map.legend();
+              scope.datamap.legend();
             }
           },
-          updateWithData: function (data) {
-            scope.map.updateChoropleth(data);
+
+          // Update chart with new data
+          updateWithData: function(data) {
+            scope.datamap.updateChoropleth(data);
           },
+
+          // Fully clear directive element
           clearElement: function () {
-            scope.map = null;
+            scope.datamap = null;
             element.empty();
             var mapContainer = $compile('<div style="position: relative; display: block; padding-bottom: {{ legendHeight }}px;"></div>')(scope);
             element.append(mapContainer);
           }
         };
-        // Watching on options, colors changing
-        scope.$watch('[options, colors]', function () {
-          scope.api.refresh();
-        }, true);
-        // Watch data changing. Only refresh if options or data map points have changed
-        scope.$watch('data', function (data, old) {
+
+        // Watch data changing
+        scope.$watch('map', function(map, old) {
           // Return if no data
-          if (!data.length) {
+          if (angular.isUndefined(map) || angular.equals({}, map)) {
             return;
           }
-          if (!old.length || data[0].values.length !== old[0].values.length) {
-            scope.api.refresh();
+          // Init the datamap, or update data
+          if (!scope.datamap || angular.equals(old.data, map.data)) {
+            scope.api.refresh(map);
           } else {
-            var _data = {};
-            angular.forEach(data[0].values, function (val) {
-              _data[val.location] = { fillKey: val.value };
-              // Set extra fields in case we want to use them in the popup
-              angular.forEach(val, function (prop, key) {
-                if (key !== 'value' && key !== 'location') {
-                  _data[val.location][key] = prop;
-                }
-              });
-            });
-            scope.api.updateWithData(_data);
+            scope.api.updateWithData(map.data);
           }
         }, true);
       }
     };
-  }
-]);
+  }]);

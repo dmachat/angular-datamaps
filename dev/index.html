@@ -29,36 +29,74 @@
     // Scope as the parent of the angular-datamap directive
     app.controller('SimpleCtrl', function($scope) {
       $scope.map = {
-        type: 'usa',
-        data: [{
-          values: [
-            { "location": "CA", "value": "Y" }, { "location": "OR", "value": "Y" }, { "location": "WA", "value": "N" }, { "location": "NV", "value": "Y" }, { "location": "ID", "value": "Maybe" }, { "location": "UT", "value": "N" }, { "location": "AZ", "value": "Y" }, { "location": "NM", "value": "N" }, { "location": "AK", "value": "Y" }, { "location": "TX", "value": "Y" }, { "location": "CO", "value": "Maybe" }, { "location": "MT", "value": "N" }, { "location": "WY", "value": "N" }, { "location": "ND", "value": "Y" }, { "location": "SD", "value": "N" }, { "location": "NE", "value": "Y" }, { "location": "KS", "value": "Y" }, { "location": "OK", "value": "N" }, { "location": "MN", "value": "Y" }, { "location": "IA", "value": "N" }, { "location": "MO", "value": "Y" }, { "location": "AR", "value": "Y" }, { "location": "LA", "value": "N" }, { "location": "WI", "value": "Y" }, { "location": "MI", "value": "N" }, { "location": "IL", "value": "Maybe" }, { "location": "TN", "value": "Maybe" }, { "location": "KY", "value": "N" }, { "location": "MS", "value": "Y" }, { "location": "AL", "value": "N" }, { "location": "FL", "value": "Maybe" }, { "location": "GA", "value": "N" }, { "location": "SC", "value": "Y" }, { "location": "NC", "value": "Y" }, { "location": "VA", "value": "N" }, { "location": "WV", "value": "Y" }, { "location": "IN", "value": "Y" }, { "location": "OH", "value": "Y" }, { "location": "PA", "value": "Y" }, { "location": "NY", "value": "Y" }, { "location": "VT", "value": "Y" }, { "location": "NH", "value": "Y" }, { "location": "ME", "value": "Y" }, { "location": "MA", "value": "N" }, { "location": "RI", "value": "N" }, { "location": "CT", "value": "Y" }, { "location": "NJ", "value": "Y" }, { "location": "DE", "value": "N" }, { "location": "MD", "value": "N" }, { "location": "DC", "value": "Y" }, { "location": "HI", "value": "N" } 
-          ]
-        }],
-        colors: ['#666666', '#b9b9b9', '#fafafa'],
+        scope: 'usa',
+        data: {
+          "CA": "red",
+          "OR": {
+            "value": "Y",
+            "fillKey": "RED"
+          },
+          "WA": {
+            "value": "N",
+            "fillKey": "BLUE"
+          },
+          "NV": {
+            "value": "Y",
+            "fillKey": "YELLOW"
+          },
+          "ID": {
+            "value": "Maybe",
+            "fillKey": "YELLOW"
+          },
+          "UT": {
+            "value": "N",
+            "fillKey": "BLUE"
+          }
+        },
+        fills: {
+          "BLUE": "blue",
+          "YELLOW": "yellow",
+          "RED": "red",
+          "defaultFill": "#b9b9b9"
+        },
         options: {
           width: 1110,
           legend: true,
           labels: true,
           labelColor: '#333333',
           labelSize: 14,
+          projection: 'mercator'
         }
       }
 
       $scope.map2 = {
-        type: 'world',
-        data: [{
-          values: [
-            { "location": "USA", "value": 125 },
-            { "location": "CAN", "value": 50 },
-            { "location": "IRL", "value": 70 },
-            { "location": "RUS", "value": 312 }
-          ]
-        }],
-        colors: ['#666666', '#b9b9b9', '#fafafa'],
+        scope: 'world',
+        data: {
+          "USA": {
+            "value": 125,
+            "fillKey": "HIGH"
+          },
+          "CAN": {
+            "value": 50,
+            "fillKey": "MEDIUM"
+          },
+          "IRL": {
+            "value": 70,
+            "fillKey": "LOW"
+          },
+          "RUS": {
+            "value": 312,
+            "fillKey": "HIGH"
+          }
+        },
+        fills: {
+          "HIGH": '#666666',
+          "LOW": '#b9b9b9',
+          "MEDIUM": '#fafafa',
+          "defaultFill": "orange"
+        },
         options: {
-          width: 1110,
-          fillQuartiles: false
+          width: 1110
         }
       }
 
@@ -91,10 +129,7 @@
       </div>
       <div class="panel-body">
         <datamap
-          options="map.options"
-          data="map.data"
-          colors="map.colors"
-          type="{{ map.type }}"
+          map="map"
           >
         </datamap>
       </div>
@@ -122,10 +157,7 @@
       </div>
       <div class="panel-body">
         <datamap
-          options="map2.options"
-          data="map2.data"
-          colors="map2.colors"
-          type="{{ map2.type }}"
+          map="map2"
           >
         </datamap>
       </div>
