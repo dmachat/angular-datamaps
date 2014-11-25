@@ -7,12 +7,14 @@ angular.module('datamaps')
       restrict: 'EA',
       scope: {
         map: '=',       //datamaps objects [required]
+        plugins: '=?',  //datamaps plugins [optional]
+        zoomable: '@',  //zoomable toggle [optional]
         onClick: '&?',  //geography onClick event [optional]
       },
       link: function(scope, element, attrs) {
 
         // Generate base map options
-        function mapOptions(options) {
+        function mapOptions() {
           return {
             element: element[0].children[0],
             scope: 'usa',
@@ -27,6 +29,14 @@ angular.module('datamaps')
                 datamap.svg.selectAll('.datamaps-subunit').on('click', function(geography) {
                   scope.onClick()(geography);
                 });
+              }
+              if (angular.isDefined(attrs.zoomable)) {
+                datamap.svg.call(d3.behavior.zoom()
+                  .on('zoom', redraw));
+              }
+              function redraw() {
+                datamap.svg.selectAll('g')
+                  .attr('transform', 'translate(' + d3.event.translate + ')scale(' + d3.event.scale + ')');
               }
             }
           };
@@ -46,9 +56,9 @@ angular.module('datamaps')
             scope.api.clearElement();
 
             // Update bounding box
-            scope.width = map.options.width || 600;
-            scope.height = map.options.height || scope.width * 0.6;
-            scope.legendHeight = map.options.legendHeight || 50;
+            scope.width = (map.options || {}).width || null;
+            scope.height = (map.options || {}).height || (scope.width ? scope.width * 0.6 : null);
+            scope.legendHeight = (map.options || {}).legendHeight || 50;
 
             // Set a few defaults for the directive
             scope.mapOptions = mapOptions(map.options);
@@ -58,9 +68,23 @@ angular.module('datamaps')
 
             scope.datamap = new Datamap(scope.mapOptions);
 
+            // Update plugins
+            scope.api.updatePlugins(scope.datamap);
+
             // Update options and choropleth
             scope.api.refreshOptions(map.options);
             scope.api.updateWithData(map.data);
+          },
+
+          // Add and initialize optional plugins
+          updatePlugins: function(datamap) {
+            if (!scope.plugins) {
+              return;
+            }
+            angular.forEach(scope.plugins, function(plugin, name) {
+              datamap.addPlugin(name, plugin);
+              datamap[name]();
+            });
           },
 
           // Set options on the datamap
