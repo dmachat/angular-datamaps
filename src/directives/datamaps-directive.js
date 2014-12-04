@@ -25,6 +25,10 @@ angular.module('datamaps')
             },
             data: {},
             done: function(datamap) {
+              function redraw() {
+                datamap.svg.selectAll('g')
+                  .attr('transform', 'translate(' + d3.event.translate + ')scale(' + d3.event.scale + ')');
+              }
               if (angular.isDefined(attrs.onClick)) {
                 datamap.svg.selectAll('.datamaps-subunit').on('click', function(geography) {
                   scope.onClick()(geography);
@@ -33,10 +37,6 @@ angular.module('datamaps')
               if (angular.isDefined(attrs.zoomable)) {
                 datamap.svg.call(d3.behavior.zoom()
                   .on('zoom', redraw));
-              }
-              function redraw() {
-                datamap.svg.selectAll('g')
-                  .attr('transform', 'translate(' + d3.event.translate + ')scale(' + d3.event.scale + ')');
               }
             }
           };
