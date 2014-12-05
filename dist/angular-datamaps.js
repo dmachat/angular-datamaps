@@ -9,7 +9,7 @@ angular.module('datamaps').directive('datamap', [
       scope: {
         map: '=',
         plugins: '=?',
-        zoomable: '@',
+        zoomable: '@?',
         onClick: '&?'
       },
       link: function (scope, element, attrs) {
@@ -46,7 +46,7 @@ angular.module('datamaps').directive('datamap', [
             scope.api.clearElement();
             // Update bounding box
             scope.width = (map.options || {}).width || null;
-            scope.height = (map.options || {}).height || (scope.width ? scope.width * 0.6 : null);
+            scope.height = (map.options || {}).height || (scope.width ? scope.width * 0.5 : null);
             scope.legendHeight = (map.options || {}).legendHeight || 50;
             // Set a few defaults for the directive
             scope.mapOptions = mapOptions(map.options);
@@ -86,6 +86,7 @@ angular.module('datamaps').directive('datamap', [
           },
           updateWithData: function (data) {
             scope.datamap.updateChoropleth(data);
+            scope.api.updatePlugins(scope.datamap);
           },
           clearElement: function () {
             scope.datamap = null;

@@ -29,34 +29,13 @@
     // Scope as the parent of the angular-datamap directive
     app.controller('SimpleCtrl', function($scope) {
       $scope.plugins = {
-        "customLegend": function(layer, data, options) {
-          data = data || {};
-          if (!this.options.fills) {
-            return;
-          }
+        customLegend: function(layer, data, options) {
           var html = ['<ul class="list-inline">'],
               label = '';
-
-          if (data.legendTitle) {
-            html.unshift('<h3>' + data.legendTitle + '</h3>');
-          }
           for (var fillKey in this.options.fills) {
-            if (fillKey === 'defaultFill') {
-              if (!data.defaultFillName) {
-                continue;
-              }
-              label = data.defaultFillName;
-            } else {
-              if (data.labels && data.labels[fillKey]) {
-                label = data.labels[fillKey];
-              } else {
-                label = fillKey;
-              }
-            }
-            html.push('<li class="key" ' +
-                        'style="border-top: 10px solid ' + this.options.fills[fillKey] +
-                        '">' +
-                        label +
+            html.push('<li class="key" ',
+                        'style="border-top: 10px solid ' + this.options.fills[fillKey] + '">',
+                        (fillKey === 'defaultFill' ? 'N/A' : fillKey),
                         '</li>');
           }
           html.push('</ul>');
@@ -103,7 +82,8 @@
             "electoralVotes": 32
           },
           "FL": {
-            "electoralVotes": 29
+            "electoralVotes": 29,
+            "fillKey": "defaultFill"
           },
           "GA": {
             "fillKey": "Republican",
@@ -206,7 +186,8 @@
             "electoralVotes": 32
           },
           "OH": {
-            "electoralVotes": 32
+            "electoralVotes": 32,
+            "fillKey": "defaultFill"
           },
           "OK": {
             "fillKey": "Republican",
@@ -337,12 +318,8 @@
           "LOW": '#b9b9b9',
           "MEDIUM": '#abdda4',
           "defaultFill": "orange"
-        },
-        options: {
-          width: 1110
         }
       }
-
     });
 
     // Start it up

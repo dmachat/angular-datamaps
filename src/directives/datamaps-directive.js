@@ -8,7 +8,7 @@ angular.module('datamaps')
       scope: {
         map: '=',       //datamaps objects [required]
         plugins: '=?',  //datamaps plugins [optional]
-        zoomable: '@',  //zoomable toggle [optional]
+        zoomable: '@?',  //zoomable toggle [optional]
         onClick: '&?',  //geography onClick event [optional]
       },
       link: function(scope, element, attrs) {
@@ -57,7 +57,7 @@ angular.module('datamaps')
 
             // Update bounding box
             scope.width = (map.options || {}).width || null;
-            scope.height = (map.options || {}).height || (scope.width ? scope.width * 0.6 : null);
+            scope.height = (map.options || {}).height || (scope.width ? scope.width * 0.5 : null);
             scope.legendHeight = (map.options || {}).legendHeight || 50;
 
             // Set a few defaults for the directive
@@ -110,6 +110,7 @@ angular.module('datamaps')
           // Update chart with new data
           updateWithData: function(data) {
             scope.datamap.updateChoropleth(data);
+            scope.api.updatePlugins(scope.datamap);
           },
 
           // Fully clear directive element
