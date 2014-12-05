@@ -49,7 +49,7 @@ angular.module('datamaps').directive('datamap', [
             scope.height = (map.options || {}).height || (scope.width ? scope.width * 0.5 : null);
             scope.legendHeight = (map.options || {}).legendHeight || 50;
             // Set a few defaults for the directive
-            scope.mapOptions = mapOptions(map.options);
+            scope.mapOptions = mapOptions();
             // Add the good stuff
             scope.mapOptions = angular.extend(scope.mapOptions, map);
             scope.datamap = new Datamap(scope.mapOptions);

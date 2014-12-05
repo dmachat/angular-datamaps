@@ -61,7 +61,7 @@ angular.module('datamaps')
             scope.legendHeight = (map.options || {}).legendHeight || 50;
 
             // Set a few defaults for the directive
-            scope.mapOptions = mapOptions(map.options);
+            scope.mapOptions = mapOptions();
 
             // Add the good stuff
             scope.mapOptions = angular.extend(scope.mapOptions, map);
