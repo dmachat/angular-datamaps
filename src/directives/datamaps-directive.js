@@ -1,14 +1,16 @@
 'use strict';
 
-angular.module('datamaps')
+angular
 
-  .directive('datamap', ['$compile', function($compile) {
+  .module('datamaps')
+
+  .directive('datamap', ['$window', function($window) {
     return {
       restrict: 'EA',
       scope: {
         map: '=',       //datamaps objects [required]
         plugins: '=?',  //datamaps plugins [optional]
-        zoomable: '@?',  //zoomable toggle [optional]
+        zoomable: '@?', //zoomable toggle [optional]
         onClick: '&?',  //geography onClick event [optional]
       },
       link: function(scope, element, attrs) {
@@ -16,7 +18,7 @@ angular.module('datamaps')
         // Generate base map options
         function mapOptions() {
           return {
-            element: element[0].children[0],
+            element: element[0],
             scope: 'usa',
             height: scope.height,
             width: scope.width,
@@ -68,6 +70,13 @@ angular.module('datamaps')
 
             scope.datamap = new Datamap(scope.mapOptions);
 
+            // Add responsive listeners
+            if (scope.mapOptions.responsive) {
+              $window.addEventListener('resize', scope.api.resize);
+            } else {
+              $window.removeEventListener('resize', scope.api.resize);
+            }
+
             // Update plugins
             scope.api.updatePlugins(scope.datamap);
 
@@ -107,6 +116,12 @@ angular.module('datamaps')
             }
           },
 
+          // Trigger datamaps resize method
+          resize: function() {
+            console.log('resize attempt');
+            scope.datamap.resize();
+          },
+
           // Update chart with new data
           updateWithData: function(data) {
             scope.datamap.updateChoropleth(data);
@@ -116,23 +131,30 @@ angular.module('datamaps')
           // Fully clear directive element
           clearElement: function () {
             scope.datamap = null;
-            element.empty();
-            var mapContainer = $compile('<div style="position: relative; display: block; padding-bottom: {{ legendHeight }}px;"></div>')(scope);
-            element.append(mapContainer);
+            element
+              .empty()
+              .css({
+                'position': 'relative',
+                'display': 'block',
+                'padding-bottom': scope.legendHeight + 'px'
+              });
           }
         };
 
         // Watch data changing
         scope.$watch('map', function(map, old) {
           // Return if no data
-          if (angular.isUndefined(map) || angular.equals({}, map)) {
+          if (!map || angular.equals({}, map)) {
             return;
           }
-          // Init the datamap, or update data
-          if (!scope.datamap || angular.equals(old.data, map.data)) {
+          // Allow animated transition when geos don't change
+          // or fully refresh
+          if (!scope.datamap || angular.equals(map.data, old.data)) {
             scope.api.refresh(map);
-          } else {
+          } else if ((map.options || {}).staticGeoData) {
             scope.api.updateWithData(map.data);
+          } else {
+            scope.api.refresh(map);
           }
         }, true);
       }

@@ -41,13 +41,18 @@
           html.push('</ul>');
           d3.select(this.options.element).append('div')
             .attr('class', 'datamaps-legend')
+            .style('position', 'absolute')
+            .style('bottom', 0)
             .html(html.join(''));
         }
       };
 
       $scope.map = {
         scope: 'usa',
-        options: {},
+        responsive: true,
+        options: {
+          staticGeoData: true
+        },
         geographyConfig: {
           highlightBorderColor: '#bada55',
           popupTemplate: function(geography, data) {
@@ -68,7 +73,7 @@
           'Light Republican': '#EAA9A8',
           defaultFill: '#b9b9b9'
         },
-        data:{
+        data: {
           "AZ": {
             "fillKey": "Republican",
             "electoralVotes": 5

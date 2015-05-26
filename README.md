@@ -96,6 +96,12 @@ $scope.updateActiveGeography = function(geography) {
 ### Toggle zoom ###
 Set the `zoomable` attribute to toggle a simple zoom on the map.
 
+### Responsive ###
+Bind the built-in Datamaps responsive methods by setting `$scope.mapObject.responsive = true`.
+
+### Animated Update Choropleth ###
+Set `options.staticGeoData = true` to allow the map to update with only `updateChoropleth`. Update choropleth only works if _updating_ is all we're doing. If geographies are added or removed from data, we have to redraw the map, so use this to explicitly say whether or not the directive can update choropleth mappings only.
+
 ### Adding plugins ###
 You may add plugins that will be evaluated by the DataMaps plugin system in order to extend the labels or legend, for example. Use it by providing an object with plugin functions keyed by name.
 
