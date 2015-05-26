@@ -1,21 +1,18 @@
 # Angular Datamaps
+
+### Note: This directive's scope values have changed as of v0.1.0 to better match the object structure used by DataMaps.
+
 Provides an Angular directive to wrap https://github.com/markmarkoh/datamaps and easily build data maps in your Angular application.
 
- - Lightweight
  - Automatically updates on changes to bound data and options
- - No dependencies beside d3, topojson and datamaps
+ - onClick events integrate with your parent controllers
+ - Evaluates plugins passed to the directive
+ - Easily toggle zoom functionality
  - Documentation for available options can be found at https://github.com/markmarkoh/datamaps
 
 ![Datamap example](/usaMap.png?raw=true "USA Map Example")
 
 ## Install
-Clone to your vendor directory
-```sh
-git clone git@github.com:dmachat/angular-datamaps.git
-```
-
-OR
-
 Install with bower and save to your project's bower.json
 ```sh
 bower install angular-datamaps --save
@@ -28,7 +25,7 @@ angular.module('app', [
 ]);
 ```
 
-Load the datamaps and the two libraries datamaps depends on (d3 and topojson).
+Load DataMaps and the two libraries DataMaps depends on (d3 and topojson).
 ```html
 <script src="d3.js"></script>
 <script src="topojson.js"></script>
@@ -36,10 +33,7 @@ Load the datamaps and the two libraries datamaps depends on (d3 and topojson).
 <script src="angular-datamaps.js"></script>
 
 <datamap
-  options="map.options"
-  data="map.data"
-  colors="map.colors"
-  type="{{ map.type }}"
+  map="mapObject"
   >
 </datamap>
 ```
@@ -47,32 +41,44 @@ Load the datamaps and the two libraries datamaps depends on (d3 and topojson).
 Add a map configuration object to your scope to bind to the directive
 ```js
 $scope.map = {
-  type: 'usa',
-  data: [{
-    values: [
-      { "location": "USA", "value": 125 },
-      { "location": "CAN", "value": 50 },
-      { "location": "FRA", "value": 70 },
-      { "location": "RUS", "value": 312 }
-    ]
-  }],
-  colors: ['#666666', '#b9b9b9', '#fafafa'],
+  scope: 'usa',
   options: {
     width: 1110,
     legendHeight: 60 // optionally set the padding for the legend
-  }
+  },
+  geographyConfig: {
+    highlighBorderColor: '#EAA9A8',
+    highlighBorderWidth: 2
+  },
+  fills: {
+    'HIGH': '#CC4731',
+    'MEDIUM': '#306596',
+    'LOW': '#667FAF',
+    'defaultFill': '#DDDDDD'
+  },
+  data: {
+    "AZ": {
+      "fillkey": "MEDIUM",
+    },
+    "CO": {
+      "fillkey": "HIGH",
+    },
+    "DE": {
+      "fillkey": "LOW",
+    },
+    "GA": {
+      "fillkey": "MEDIUM",
+    },
+  },
 }
 ```
 
 ### Geography click events ###
-The datamaps click event can trigger a bound function with the clicked geography object. Just add your custom function to the `on-click` attribute, like this (notice there are no parenthesis):
+The DataMaps click event can trigger a bound function with the clicked geography object. just add your custom function to the `on-click` attribute, like this (notice there are no parenthesis):
 
 ```html
 <datamap
-  options="map.options"
-  data="map.data"
-  colors="map.colors"
-  type="{{ map.type }}"
+  map="mapObject"
   on-click="updateActiveGeography"
   >
 </datamap>
@@ -85,6 +91,46 @@ $scope.updateActiveGeography = function(geography) {
   $scope.stateName = geography.properties.name;
   $scope.stateCode = geography.id;
 }
+```
+
+### Toggle zoom ###
+Set the `zoomable` attribute to toggle a simple zoom on the map.
+
+### Responsive ###
+Bind the built-in Datamaps responsive methods by setting `$scope.mapObject.responsive = true`.
+
+### Animated Update Choropleth ###
+Set `options.staticGeoData = true` to allow the map to update with only `updateChoropleth`. Update choropleth only works if _updating_ is all we're doing. If geographies are added or removed from data, we have to redraw the map, so use this to explicitly say whether or not the directive can update choropleth mappings only.
+
+### Adding plugins ###
+You may add plugins that will be evaluated by the DataMaps plugin system in order to extend the labels or legend, for example. Use it by providing an object with plugin functions keyed by name.
+
+```html
+<datamap
+  map="mapObject"
+  plugins="mapPlugins"
+  >
+</datamap>
+```
+
+```js
+$scope.mapObject = mapObject;
+$scope.mapPlugins = {
+  customLegend: function(layer, data, options) {
+    var html = ['<ul class="list-inline">'],
+        label = '';
+    for (var fillKey in this.options.fills) {
+      html.push('<li class="key" ',
+                  'style="border-top: 10px solid ' + this.options.fills[fillKey] + '">',
+                  fillKey,
+                  '</li>');
+    }
+    html.push('</ul>');
+    d3.select(this.options.element).append('div')
+      .attr('class', 'datamaps-legend')
+      .html(html.join(''));
+  }
+};
 ```
 
 ## Build it yourself!

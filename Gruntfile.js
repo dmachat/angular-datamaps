@@ -126,7 +126,7 @@ module.exports = function (grunt) {
           '<%= config.dist %>/<%= config.minified %>': '<%= config.dist %>/<%= config.module %>'
         },
         options: {
-          compress: true
+          compress: {}
         }
       }
     },
@@ -172,6 +172,7 @@ module.exports = function (grunt) {
   grunt.registerTask('dev', [
     'clean:dev',
     'concat:dev',
+    'ngmin:dist',
     'jshint',
     'connect:livereload',
     'watch'

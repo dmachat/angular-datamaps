@@ -51,6 +51,7 @@
     "pause": false,
     "protractor": false,
     "moment": false,
-    "Datamap": false
+    "Datamap": false,
+    "d3": false
   }
 }
