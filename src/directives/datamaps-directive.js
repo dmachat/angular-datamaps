@@ -118,7 +118,6 @@ angular
 
           // Trigger datamaps resize method
           resize: function() {
-            console.log('resize attempt');
             scope.datamap.resize();
           },
 
