@@ -91,7 +91,6 @@ angular.module('datamaps').directive('datamap', [
             }
           },
           resize: function () {
-            console.log('resize attempt');
             scope.datamap.resize();
           },
           updateWithData: function (data) {
