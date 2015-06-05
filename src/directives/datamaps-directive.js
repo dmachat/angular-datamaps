@@ -11,7 +11,8 @@ angular
         map: '=',       //datamaps objects [required]
         plugins: '=?',  //datamaps plugins [optional]
         zoomable: '@?', //zoomable toggle [optional]
-        onClick: '&?',  //geography onClick event [optional]
+        onClick: '&?',  //geography onClick event [optional],
+        pluginData: '=' //datamaps plugin data object where keys are plugin names [optional]
       },
       link: function(scope, element, attrs) {
 
@@ -90,9 +91,12 @@ angular
             if (!scope.plugins) {
               return;
             }
+
+            var pluginData = scope.pluginData || {};
+
             angular.forEach(scope.plugins, function(plugin, name) {
               datamap.addPlugin(name, plugin);
-              datamap[name]();
+              datamap[name](pluginData[name]);
             });
           },
 
@@ -155,6 +159,11 @@ angular
           } else {
             scope.api.refresh(map);
           }
+        }, true);
+
+        //update the plugins if the pluginData has changed
+        scope.$watch('pluginData', function(){
+          scope.api.updatePlugins(scope.datamap);
         }, true);
       }
     };

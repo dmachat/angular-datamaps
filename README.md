@@ -68,7 +68,7 @@ $scope.map = {
     },
     "GA": {
       "fillkey": "MEDIUM",
-    },
+    }
   },
 }
 ```
@@ -105,10 +105,15 @@ Set `options.staticGeoData = true` to allow the map to update with only `updateC
 ### Adding plugins ###
 You may add plugins that will be evaluated by the DataMaps plugin system in order to extend the labels or legend, for example. Use it by providing an object with plugin functions keyed by name.
 
+Data may be supplied to plugins through the `plugin-data`. This should be an object with keys corresponding to plugin names.
+
+If you would like to pass data into a core Datamaps plugin, be sure to include an empty entry for the plugin in the `plugin` object. This will ensure that gets processed. Datamaps won't override a plugin that is already defined.
+
 ```html
 <datamap
   map="mapObject"
   plugins="mapPlugins"
+  plugin-data="mapPluginData"
   >
 </datamap>
 ```
@@ -116,6 +121,7 @@ You may add plugins that will be evaluated by the DataMaps plugin system in orde
 ```js
 $scope.mapObject = mapObject;
 $scope.mapPlugins = {
+  bubbles: null,
   customLegend: function(layer, data, options) {
     var html = ['<ul class="list-inline">'],
         label = '';
@@ -131,6 +137,10 @@ $scope.mapPlugins = {
       .html(html.join(''));
   }
 };
+$scope.mapPluginData = {
+  bubbles: [{name: 'Bubble 1', latitude: 21.32, longitude: -7.32, radius: 45, fillKey: 'gt500'}]
+};
+
 ```
 
 ## Build it yourself!

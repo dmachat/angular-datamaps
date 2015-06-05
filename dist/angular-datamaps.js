@@ -10,7 +10,8 @@ angular.module('datamaps').directive('datamap', [
         map: '=',
         plugins: '=?',
         zoomable: '@?',
-        onClick: '&?'
+        onClick: '&?',
+        pluginData: '='
       },
       link: function (scope, element, attrs) {
         // Generate base map options
@@ -69,9 +70,10 @@ angular.module('datamaps').directive('datamap', [
             if (!scope.plugins) {
               return;
             }
+            var pluginData = scope.pluginData || {};
             angular.forEach(scope.plugins, function (plugin, name) {
               datamap.addPlugin(name, plugin);
-              datamap[name]();
+              datamap[name](pluginData[name]);
             });
           },
           refreshOptions: function (options) {
@@ -121,6 +123,10 @@ angular.module('datamaps').directive('datamap', [
           } else {
             scope.api.refresh(map);
           }
+        }, true);
+        //update the plugins if the pluginData has changed
+        scope.$watch('pluginData', function () {
+          scope.api.updatePlugins(scope.datamap);
         }, true);
       }
     };
