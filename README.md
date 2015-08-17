@@ -40,7 +40,7 @@ Load DataMaps and the two libraries DataMaps depends on (d3 and topojson).
 
 Add a map configuration object to your scope to bind to the directive
 ```js
-$scope.map = {
+$scope.mapObject = {
   scope: 'usa',
   options: {
     width: 1110,
