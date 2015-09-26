@@ -23,6 +23,7 @@ angular
             scope: 'usa',
             height: scope.height,
             width: scope.width,
+            aspectRatio: scope.aspectRatio,
             fills: {
               defaultFill: '#b9b9b9'
             },
@@ -61,6 +62,7 @@ angular
             // Update bounding box
             scope.width = (map.options || {}).width || null;
             scope.height = (map.options || {}).height || (scope.width ? scope.width * 0.5 : null);
+            scope.aspectRatio = (map.options || {}).aspectRatio || null;
             scope.legendHeight = (map.options || {}).legendHeight || 50;
 
             // Set a few defaults for the directive
