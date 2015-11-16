@@ -13,6 +13,11 @@ Provides an Angular directive to wrap https://github.com/markmarkoh/datamaps and
 ![Datamap example](/usaMap.png?raw=true "USA Map Example")
 
 ## Install
+Install with npm and save to your project's package.json
+```sh
+npm install angular-datamaps --save
+```
+
 Install with bower and save to your project's bower.json
 ```sh
 bower install angular-datamaps --save
