@@ -13,6 +13,7 @@ angular
         zoomable: '@?', //zoomable toggle [optional]
         onClick: '&?',  //geography onClick event [optional],
         pluginData: '=' //datamaps plugin data object where keys are plugin names [optional]
+        api: '=?'       //hook into datamaps API methods [optional]
       },
       link: function(scope, element, attrs) {
 
