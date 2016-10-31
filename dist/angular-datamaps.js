@@ -11,9 +11,11 @@ angular.module('datamaps').directive('datamap', [
         plugins: '=?',
         zoomable: '@?',
         onClick: '&?',
-        pluginData: '='
+        pluginData: '=',
+        api: '=?'
       },
       link: function (scope, element, attrs) {
+        var zoom;
         // Generate base map options
         function mapOptions() {
           return {
@@ -21,9 +23,14 @@ angular.module('datamaps').directive('datamap', [
             scope: 'usa',
             height: scope.height,
             width: scope.width,
+            aspectRatio: scope.aspectRatio,
             fills: { defaultFill: '#b9b9b9' },
             data: {},
             done: function (datamap) {
+              zoom = d3.behavior.zoom().scaleExtent([
+                1,
+                10
+              ]).on('zoom', redraw);
               function redraw() {
                 datamap.svg.selectAll('g').attr('transform', 'translate(' + d3.event.translate + ')scale(' + d3.event.scale + ')');
               }
@@ -33,7 +40,7 @@ angular.module('datamaps').directive('datamap', [
                 });
               }
               if (angular.isDefined(attrs.zoomable)) {
-                datamap.svg.call(d3.behavior.zoom().on('zoom', redraw));
+                datamap.svg.call(zoom);
               }
             }
           };
@@ -48,6 +55,7 @@ angular.module('datamaps').directive('datamap', [
             // Update bounding box
             scope.width = (map.options || {}).width || null;
             scope.height = (map.options || {}).height || (scope.width ? scope.width * 0.5 : null);
+            scope.aspectRatio = (map.options || {}).aspectRatio || null;
             scope.legendHeight = (map.options || {}).legendHeight || 50;
             // Set a few defaults for the directive
             scope.mapOptions = mapOptions();
@@ -106,6 +114,54 @@ angular.module('datamaps').directive('datamap', [
               'display': 'block',
               'padding-bottom': scope.legendHeight + 'px'
             });
+          },
+          zoomClick: function (zoomType, factor) {
+            var zoomType = zoomType || 'reset';
+            var factor = factor || 1.2;
+            var center = [
+                element[0].offsetWidth / 2,
+                element[0].offsetHeight / 2
+              ];
+            var scale = zoom.scale();
+            var translate = zoom.translate();
+            var extent = zoom.scaleExtent();
+            if (zoomType === 'reset') {
+              zoom.scale(1).translate([
+                0,
+                0
+              ]);
+              scope.datamap.svg.selectAll('g').attr('transform', 'translate(' + [
+                0,
+                0
+              ] + ')scale(' + 1 + ')');
+              return false;
+            } else if (zoomType === 'out') {
+              factor = 1 / factor;
+            }
+            var target_scale = scale * factor;
+            // If we're already at an extent, done
+            if (target_scale < extent[0] || target_scale === extent[1]) {
+              return false;
+            }
+            // If the factor is too much, scale it down to reach the extent exactly
+            var clamped_target_scale = Math.max(extent[0], Math.min(extent[1], target_scale));
+            if (clamped_target_scale != target_scale) {
+              target_scale = clamped_target_scale;
+              factor = target_scale / scale;
+            }
+            // Center each vector, stretch, then put back
+            var x = (translate[0] - center[0]) * factor + center[0];
+            var y = (translate[1] - center[1]) * factor + center[1];
+            // Update zoom value itself
+            zoom.scale(target_scale).translate([
+              x,
+              y
+            ]);
+            // Update map
+            scope.datamap.svg.selectAll('g').attr('transform', 'translate(' + [
+              x,
+              y
+            ] + ')scale(' + target_scale + ')');
           }
         };
         // Watch data changing
